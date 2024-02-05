@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Table(name = "flights")
 public class Flight {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -27,10 +27,12 @@ public class Flight {
 
 
  //   @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "departure_airport_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Airport departureAirport;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "arrival_airport_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Airport arrivalAirport;
 
     private double price;

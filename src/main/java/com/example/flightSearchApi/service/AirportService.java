@@ -1,9 +1,11 @@
 package com.example.flightSearchApi.service;
 
+import com.example.flightSearchApi.dto.AirportUpdateDto;
 import com.example.flightSearchApi.model.Airport;
 import com.example.flightSearchApi.model.Flight;
 import com.example.flightSearchApi.repository.AirportRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -28,17 +30,19 @@ public class AirportService {
         return airportRepository.save(airport);
     }
 
-    public Airport updateAirport(Long id, Airport airport){
-        return airportRepository.findById(id)
-                .map(airport1 -> {
-                    airport1.setName(airport.getName());
-                    return airportRepository.save(airport1);
-                })
-                .orElseGet(()-> airportRepository.save(airport));
+    public Airport updateAirport(Long id, AirportUpdateDto airportDto){
+       Optional<Airport> optionalAirport = airportRepository.findById(id);
+       if(optionalAirport.isPresent()){
+           Airport updateAirport= optionalAirport.get();
+           updateAirport.setName(airportDto.getName());
+           return airportRepository.save(updateAirport);
+       }
+       else{
+           throw new RuntimeException("Couldn't find airport.");
+       }
 
     }
 
-   // public Collection<Flight> flights   tüm uçuşları getirme böyle mi olacak acaba
 
     public void deleteAirport(Long id){
         airportRepository.deleteById(id);

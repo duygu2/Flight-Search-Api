@@ -23,10 +23,12 @@ public class SecurityConfig {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        request ->
-                                request.requestMatchers("/api/v1/auth/**").permitAll()
-                                        .anyRequest()
-                                        .authenticated()
+                        request -> request
+                                .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/api/v1/flights/**").permitAll()
+                                .requestMatchers("/api/v1/airports/**").permitAll()
+                                .anyRequest()
+                                .authenticated()
                 )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
