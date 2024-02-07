@@ -8,6 +8,7 @@ import com.example.flightSearchApi.service.FlightService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -21,14 +22,20 @@ public class FlightController {
     public FlightController(FlightService flightService) {
         this.flightService = flightService;
     }
+
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping()
     public ResponseEntity<?> getAllFlights(){
         return  ResponseEntity.ok(flightService.getAllFlight());
     }
+
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getFlightById(@PathVariable Long id){
         return ResponseEntity.ok(flightService.getFlightById(id));
     }
+
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @PostMapping()
     public ResponseEntity<Flight> addFlight(@RequestBody FlightRequestDto flight){
         return ResponseEntity.ok(flightService.addFlight(flight));
@@ -39,10 +46,12 @@ public class FlightController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Flight> updateFlight(@PathVariable Long id, @RequestBody FlightRequestDto flightUpdateDto){
         return ResponseEntity.ok(flightService.updateFlight(id,flightUpdateDto));
     }
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/search")
     public ResponseEntity<Object> searchFlights(
             @RequestParam String departureAirportName,
