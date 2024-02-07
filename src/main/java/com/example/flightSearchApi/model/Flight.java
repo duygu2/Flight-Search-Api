@@ -28,11 +28,11 @@ public class Flight {
 
  //   @JsonIgnore
     @JoinColumn(name = "departure_airport_id", nullable = false)
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Airport departureAirport;
 
     @JoinColumn(name = "arrival_airport_id", nullable = false)
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Airport arrivalAirport;
 
     private double price;

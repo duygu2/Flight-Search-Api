@@ -8,6 +8,7 @@ import com.example.flightSearchApi.model.Flight;
 import com.example.flightSearchApi.repository.AirportRepository;
 import com.example.flightSearchApi.repository.FlightRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,7 @@ public class FlightService {
         return flightRepository.findById(id);
     }
 
+    @Transactional
     public Flight addFlight(FlightRequestDto requestDto){
 
         Flight flight = new Flight();
