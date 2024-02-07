@@ -11,8 +11,11 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -106,6 +109,36 @@ public class FlightService {
         flightRepository.deleteById(id);
     }
 
-}
+    public List<Flight> searchFlights(String departureAirportName, String arrivalAirportName, LocalDateTime departureDateTime, LocalDateTime returnDateTime) {
+        try {
+            Optional<Airport> departureAirportOptional = Optional.ofNullable(airportRepository.findByName(departureAirportName));
+            Airport departureAirport = departureAirportOptional.orElseThrow(() -> new IllegalArgumentException("Departure Airport not found with name: " + departureAirportName));
 
+            Optional<Airport> arrivalAirportOptional = Optional.ofNullable(airportRepository.findByName(arrivalAirportName));
+            Airport arrivalAirport = arrivalAirportOptional.orElseThrow(() -> new IllegalArgumentException("Arrival Airport not found with name: " + arrivalAirportName));
+
+            if (returnDateTime != null) {
+                // Çift yönlü uçuş
+                // Dönüş tarihi verildiyse, iki yönlü uçuşları ara
+                List<Flight> flights = flightRepository.findAllByDepartureAirportAndArrivalAirportAndDepartureDateHourAfter(
+                        departureAirport, arrivalAirport, departureDateTime);
+
+                if (flights.isEmpty()) {
+                    throw new RuntimeException("No round-trip flights found for the specified criteria");
+                }
+
+                return flights;
+            } else {
+                // Tek yönlü uçuş
+                // Dönüş tarihi verilmediyse, tek yönlü uçuşları ara
+                Optional<Flight> optionalFlight = flightRepository.findFirstByDepartureAirportAndArrivalAirportAndDepartureDateHourAfter(
+                        departureAirport, arrivalAirport, departureDateTime);
+
+                return optionalFlight.map(Collections::singletonList)
+                        .orElseThrow(() -> new RuntimeException("No one-way flight found for the specified criteria"));
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }}
 
