@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 @ComponentScan(basePackages = "com.example.flightSearchApi")
+@OpenAPIDefinition
 public class FlightSearchApiApplication {
 
 	public static void main(String[] args) {
